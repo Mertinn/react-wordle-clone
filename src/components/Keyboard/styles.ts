@@ -11,7 +11,7 @@ const BaseKey = styled.div`
   background: #818384;
   color: white;
   fill: white;
-  padding: 1.2em 0;
+  padding: 1.5em 0;
   display: flex;
   align-items: center;
   justify-content: center;
