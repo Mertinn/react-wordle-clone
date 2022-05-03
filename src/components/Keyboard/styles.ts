@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const KeyboardContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 0.4em;
   width: min(100%, 460px);
 `;
@@ -11,7 +12,7 @@ const BaseKey = styled.div`
   background: #818384;
   color: white;
   fill: white;
-  padding: 1.5em 0;
+  padding: 1.4em 0;
   display: flex;
   align-items: center;
   justify-content: center;

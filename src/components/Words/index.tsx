@@ -1,41 +1,65 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Character, WordsContainer } from "./styles";
+import {
+  Character,
+  CharacterStatusType,
+  ShakeAnimationDuration,
+  WordsContainer,
+  WordsRow,
+} from "./styles";
+import WordDictionary from "../../assets/dictionary.json";
+
+interface ICharacter {
+  status: CharacterStatusType;
+  character: string;
+}
 
 const Words = () => {
   const currentRowIndex = useRef(0);
-  const [characters, setCharacters] = useState<(string | null)[][]>([
-    [null, null, null, null, null],
-    [null, null, null, null, null],
-    [null, null, null, null, null],
-    [null, null, null, null, null],
-    [null, null, null, null, null],
-    [null, null, null, null, null],
-  ]);
+  const [characters, setCharacters] = useState<ICharacter[][]>(
+    Array.from({ length: 6 }, () =>
+      Array.from({ length: 5 }, () => ({ status: "default", character: "" }))
+    )
+  );
+  const [shakenRowIndex, setShakenRowIndex] = useState<null | number>(null);
 
   const addCharacter = useCallback(
     (character: string) => {
-      const currentRow = characters[currentRowIndex.current];
+      const charactersCopy = [...characters];
+      const currentRow = charactersCopy[currentRowIndex.current];
       for (let i = 0; i < currentRow.length; i++) {
-        if (currentRow[i] === null) {
-          const charactersCopy = [...characters];
-          charactersCopy[currentRowIndex.current][i] = character;
-          setCharacters(charactersCopy);
-          break;
-        }
+        if (currentRow[i].status !== "default") continue;
+
+        currentRow[i].character = character;
+        currentRow[i].status = "filled";
+        console.log(currentRow[i]);
+        setCharacters(charactersCopy);
+        break;
       }
     },
     [characters]
   );
 
-  const removeLastCharacter = () => {
-    const currentRow = characters[currentRowIndex.current];
+  const removeLastCharacter = useCallback(() => {
+    const charactersCopy = [...characters];
+    const currentRow = charactersCopy[currentRowIndex.current];
     for (let i = currentRow.length - 1; i >= 0; i--) {
-      if (currentRow[i] !== null) {
-        const charactersCopy = [...characters];
-        charactersCopy[currentRowIndex.current][i] = null;
-        setCharacters(charactersCopy);
-        break;
-      }
+      if (currentRow[i].status === "default") continue;
+
+      currentRow[i].character = "";
+      currentRow[i].status = "default";
+      setCharacters(charactersCopy);
+      break;
+    }
+  }, [characters]);
+
+  const enterWord = () => {
+    const word = characters[currentRowIndex.current].join("");
+    if (word.length !== 6) {
+      setShakenRowIndex(currentRowIndex.current);
+      setTimeout(() => {
+        setShakenRowIndex(null);
+      }, parseInt(ShakeAnimationDuration));
+      return;
     }
   };
 
@@ -47,22 +71,23 @@ const Words = () => {
 
       if (e.key === "Backspace") removeLastCharacter();
 
-      console.log(e);
+      if (e.key === "Enter") enterWord();
+
+      // console.log(e);
     };
-  }, [addCharacter]);
+  }, [addCharacter, removeLastCharacter]);
 
   return (
     <WordsContainer>
-      {characters.map((row, rowIndex) =>
-        row.map((element, elementIndex) => (
-          <Character
-            key={elementIndex + rowIndex * row.length}
-            containsCharacter={!!(element || "")}
-          >
-            {element || ""}
-          </Character>
-        ))
-      )}
+      {characters.map((row, rowIndex) => (
+        <WordsRow key={rowIndex} shaken={shakenRowIndex === rowIndex}>
+          {row.map((element, elementIndex) => (
+            <Character key={elementIndex} status={element.status}>
+              {element.character}
+            </Character>
+          ))}
+        </WordsRow>
+      ))}
     </WordsContainer>
   );
 };
