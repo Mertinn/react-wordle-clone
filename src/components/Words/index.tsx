@@ -21,6 +21,7 @@ const Words = () => {
     )
   );
   const [shakenRowIndex, setShakenRowIndex] = useState<null | number>(null);
+  const generatedWord = useRef("homer");
 
   const addCharacter = useCallback(
     (character: string) => {
@@ -31,7 +32,6 @@ const Words = () => {
 
         currentRow[i].character = character;
         currentRow[i].status = "filled";
-        console.log(currentRow[i]);
         setCharacters(charactersCopy);
         break;
       }
@@ -52,15 +52,59 @@ const Words = () => {
     }
   }, [characters]);
 
+  const getCharacterOccurencesInWord = (character: string) => {
+    return generatedWord.current.split(character).length - 1;
+  };
+
+  const getEnteredWord = () => {
+    let enteredWord = "";
+    const currentRow = characters[currentRowIndex.current];
+    for (let i = 0; i < currentRow.length; i++) {
+      enteredWord += currentRow[i].character;
+    }
+    return enteredWord;
+  };
+
+  const updateCharactersState = () => {
+    const enteredWord = getEnteredWord();
+    const charactersCopy = [...characters];
+    const currentRow = charactersCopy[currentRowIndex.current];
+    const checkedIndexes: number[] = [];
+    for (let i = 0; i < enteredWord.length; i++) {
+      const character = enteredWord.charAt(i);
+      const currentElement = currentRow[i];
+      for (let l = 0; l < generatedWord.current.length; l++) {
+        if (checkedIndexes.includes(l)) continue;
+
+        const generatedWordCharacter = generatedWord.current.charAt(l);
+        if (l === i && character === generatedWordCharacter) {
+          currentElement.status = "green";
+          checkedIndexes.push(l);
+          break;
+        } else if (character === generatedWordCharacter) {
+          currentElement.status = "yellow";
+          checkedIndexes.push(l);
+          break;
+        } else {
+          currentElement.status = "notGuessed";
+        }
+      }
+    }
+    setCharacters(charactersCopy);
+  };
+
   const enterWord = () => {
-    const word = characters[currentRowIndex.current].join("");
-    if (word.length !== 6) {
+    const enteredWord = getEnteredWord();
+    if (enteredWord.length !== 5) {
       setShakenRowIndex(currentRowIndex.current);
       setTimeout(() => {
         setShakenRowIndex(null);
       }, parseInt(ShakeAnimationDuration));
       return;
     }
+
+    updateCharactersState();
+    currentRowIndex.current++;
   };
 
   useEffect(() => {

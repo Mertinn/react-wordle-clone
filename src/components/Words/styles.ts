@@ -51,15 +51,58 @@ WordsRow.defaultProps = {
   shaken: false,
 };
 
+const FlipAnimationDuration = "0.4s";
+const FlipAnimation = (background: string) => keyframes`
+  0% {
+    transform: rotateX(0);
+  }
+
+  50% {
+    transform: rotateX(-90deg);
+    background: none;
+  }
+
+  100% {
+    background: ${background};
+    transform: rotateX(0);
+    border: 1px solid transparent;
+  }
+`;
+
+const AnimationDelayMixin = css`
+  &:nth-child(2) {
+    animation-delay: calc(${FlipAnimationDuration});
+  }
+  &:nth-child(3) {
+    animation-delay: calc(${FlipAnimationDuration} * 2);
+  }
+  &:nth-child(4) {
+    animation-delay: calc(${FlipAnimationDuration} * 3);
+  }
+  &:nth-child(5) {
+    animation-delay: calc(${FlipAnimationDuration} * 4);
+  }
+`;
+
 const CharacterStatuses = {
   default: null,
-  green: css``,
-  yellow: css``,
+  green: css`
+    animation: ${FlipAnimation("#538d4e")} ${FlipAnimationDuration} forwards;
+    ${AnimationDelayMixin};
+  `,
+  yellow: css`
+    animation: ${FlipAnimation("#b59f3b")} ${FlipAnimationDuration} forwards;
+    ${AnimationDelayMixin};
+  `,
   filled: css`
     border: 2px solid #565758;
     animation: ${StartingAnimation} 0.15s;
   `,
-  notGuessed: css``,
+  notGuessed: css`
+    animation: ${FlipAnimation("rgb(58, 58, 60)")} ${FlipAnimationDuration}
+      forwards;
+    ${AnimationDelayMixin};
+  `,
 };
 
 export type CharacterStatusType = keyof typeof CharacterStatuses;
