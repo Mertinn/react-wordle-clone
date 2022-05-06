@@ -36,7 +36,8 @@ export const CharactersProvider = ({ children }: { children: ReactNode }) => {
   const currentRowIndex = useRef(0);
   const [shakenRowIndex, setShakenRowIndex] = useState<null | number>(null);
   const [generatedWord, setGeneratedWord] = useState(
-    WordDictionary[Math.floor(Math.random() * WordDictionary.length)]
+    "badge"
+    // WordDictionary[Math.floor(Math.random() * WordDictionary.length)]
   );
   const { addNotification } = useNotifications();
 
@@ -93,20 +94,31 @@ export const CharactersProvider = ({ children }: { children: ReactNode }) => {
     for (let i = 0; i < enteredWord.length; i++) {
       const character = enteredWord.charAt(i);
       const currentElement = currentRow[i];
+      let currentlyChecking = "green";
       for (let l = 0; l < generatedWord.length; l++) {
         if (checkedIndexes.includes(l)) continue;
 
         const generatedWordCharacter = generatedWord.charAt(l);
-        if (l === i && character === generatedWordCharacter) {
+        if (
+          l === i &&
+          character === generatedWordCharacter &&
+          currentlyChecking === "green"
+        ) {
           currentElement.status = "green";
           checkedIndexes.push(l);
           break;
-        } else if (character === generatedWordCharacter) {
+        } else if (
+          character === generatedWordCharacter &&
+          currentlyChecking === "yellow"
+        ) {
           currentElement.status = "yellow";
           checkedIndexes.push(l);
           break;
-        } else {
-          currentElement.status = "notGuessed";
+        }
+        currentElement.status = "notGuessed";
+        if (l === generatedWord.length - 1 && currentlyChecking === "green") {
+          currentlyChecking = "yellow";
+          l = 0;
         }
       }
     }
