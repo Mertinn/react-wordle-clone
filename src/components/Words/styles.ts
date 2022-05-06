@@ -52,7 +52,7 @@ WordsRow.defaultProps = {
   shaken: false,
 };
 
-const FlipAnimationDuration = "0.4s";
+export const FlipAnimationDuration = "400ms";
 const FlipAnimation = (background: string) => keyframes`
   0% {
     transform: rotateX(0);

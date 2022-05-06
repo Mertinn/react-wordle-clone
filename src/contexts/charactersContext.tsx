@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import {
   CharacterStatusType,
+  FlipAnimationDuration,
   ShakeAnimationDuration,
 } from "../components/Words/styles";
 import WordDictionary from "../assets/dictionary.json";
@@ -27,17 +28,18 @@ interface IContext {
 
 const CharactersContext = createContext(null as unknown as IContext);
 
+const defaultCharacterState: ICharacter[][] = Array.from({ length: 6 }, () =>
+  Array.from({ length: 5 }, () => ({ status: "default", character: "" }))
+);
+
 export const CharactersProvider = ({ children }: { children: ReactNode }) => {
-  const [characters, setCharacters] = useState<ICharacter[][]>(
-    Array.from({ length: 6 }, () =>
-      Array.from({ length: 5 }, () => ({ status: "default", character: "" }))
-    )
+  const [characters, setCharacters] = useState(
+    JSON.parse(JSON.stringify(defaultCharacterState))
   );
   const currentRowIndex = useRef(0);
   const [shakenRowIndex, setShakenRowIndex] = useState<null | number>(null);
   const [generatedWord, setGeneratedWord] = useState(
-    "badge"
-    // WordDictionary[Math.floor(Math.random() * WordDictionary.length)]
+    WordDictionary[Math.floor(Math.random() * WordDictionary.length)]
   );
   const { addNotification } = useNotifications();
 
@@ -58,6 +60,15 @@ export const CharactersProvider = ({ children }: { children: ReactNode }) => {
       setCharacters(charactersCopy);
       break;
     }
+  };
+
+  const resetGame = () => {
+    setGeneratedWord(
+      WordDictionary[Math.floor(Math.random() * WordDictionary.length)]
+    );
+    console.log(defaultCharacterState);
+    setCharacters(JSON.parse(JSON.stringify(defaultCharacterState)));
+    currentRowIndex.current = 0;
   };
 
   const getEnteredWord = () => {
@@ -141,14 +152,17 @@ export const CharactersProvider = ({ children }: { children: ReactNode }) => {
       setShakenRowIndex(currentRowIndex.current);
       resetShakenRowAfterAnimation();
       addNotification("Not in word list");
-      // return;
-    }
-
-    // Word is guessed correctly
-    if (checkIfWin()) {
+      return;
     }
 
     updateCharactersState();
+
+    // Word is guessed correctly
+    if (checkIfWin()) {
+      addNotification("You win");
+      setTimeout(() => resetGame(), parseInt(FlipAnimationDuration) * 6);
+    }
+
     currentRowIndex.current++;
   };
 
@@ -162,6 +176,7 @@ export const CharactersProvider = ({ children }: { children: ReactNode }) => {
         shakenRowIndex,
       }}
     >
+      {/* <button onClick={() => console.log(defaultCharacterState)}>es</button> */}
       {children}
     </CharactersContext.Provider>
   );
