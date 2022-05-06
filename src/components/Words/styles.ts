@@ -44,7 +44,8 @@ export const WordsRow = styled.div<{ shaken?: boolean }>`
     props.shaken &&
     css`
       animation: ${ShakeAnimation} ${ShakeAnimationDuration};
-    `}
+    `};
+  z-index: -1;
 `;
 
 WordsRow.defaultProps = {

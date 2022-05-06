@@ -19,6 +19,7 @@ const BaseKey = styled.div`
   border-radius: 0.3em;
   font-size: 0.83em;
   font-weight: 600;
+  text-transform: uppercase;
 `;
 
 export const DefaultKeyboardKey = styled(BaseKey)`

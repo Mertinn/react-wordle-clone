@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createGlobalStyle } from "styled-components";
 import App from "./App";
+import { CharactersProvider } from "./contexts/charactersContext";
+import { NotificationsProvider } from "./contexts/notificationsContext";
 import reportWebVitals from "./reportWebVitals";
 
 const GlobalStyle = createGlobalStyle`
@@ -22,7 +24,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <GlobalStyle />
-    <App />
+    <NotificationsProvider>
+      <CharactersProvider>
+        <App />
+      </CharactersProvider>
+    </NotificationsProvider>
   </React.StrictMode>
 );
 

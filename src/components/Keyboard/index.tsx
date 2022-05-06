@@ -5,42 +5,38 @@ import {
   LargeKeyboardKey,
 } from "./styles";
 import { ReactComponent as BackspaceIcon } from "../../assets/backspaceIcon.svg";
+import { useCharacters } from "../../contexts/charactersContext";
 
 const Keyboard = () => {
+  const { addCharacter, enterWord, removeLastCharacter } = useCharacters();
+  const keys = [
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+    ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+    ["z", "x", "c", "v", "b", "n", "m"],
+  ];
   return (
     <KeyboardContainer>
-      <DefaultKeyboardKey>Q</DefaultKeyboardKey>
-      <DefaultKeyboardKey>W</DefaultKeyboardKey>
-      <DefaultKeyboardKey>E</DefaultKeyboardKey>
-      <DefaultKeyboardKey>R</DefaultKeyboardKey>
-      <DefaultKeyboardKey>T</DefaultKeyboardKey>
-      <DefaultKeyboardKey>Y</DefaultKeyboardKey>
-      <DefaultKeyboardKey>U</DefaultKeyboardKey>
-      <DefaultKeyboardKey>I</DefaultKeyboardKey>
-      <DefaultKeyboardKey>O</DefaultKeyboardKey>
-      <DefaultKeyboardKey>P</DefaultKeyboardKey>
+      {keys[0].map((char, index) => (
+        <DefaultKeyboardKey key={index} onClick={() => addCharacter(char)}>
+          {char}
+        </DefaultKeyboardKey>
+      ))}
 
       <div />
-      <DefaultKeyboardKey>A</DefaultKeyboardKey>
-      <DefaultKeyboardKey>S</DefaultKeyboardKey>
-      <DefaultKeyboardKey>D</DefaultKeyboardKey>
-      <DefaultKeyboardKey>F</DefaultKeyboardKey>
-      <DefaultKeyboardKey>G</DefaultKeyboardKey>
-      <DefaultKeyboardKey>H</DefaultKeyboardKey>
-      <DefaultKeyboardKey>J</DefaultKeyboardKey>
-      <DefaultKeyboardKey>K</DefaultKeyboardKey>
-      <DefaultKeyboardKey>L</DefaultKeyboardKey>
+      {keys[1].map((char, index) => (
+        <DefaultKeyboardKey key={index} onClick={() => addCharacter(char)}>
+          {char}
+        </DefaultKeyboardKey>
+      ))}
       <div />
 
-      <LargeKeyboardKey>ENTER</LargeKeyboardKey>
-      <DefaultKeyboardKey>Z</DefaultKeyboardKey>
-      <DefaultKeyboardKey>X</DefaultKeyboardKey>
-      <DefaultKeyboardKey>C</DefaultKeyboardKey>
-      <DefaultKeyboardKey>V</DefaultKeyboardKey>
-      <DefaultKeyboardKey>B</DefaultKeyboardKey>
-      <DefaultKeyboardKey>N</DefaultKeyboardKey>
-      <DefaultKeyboardKey>M</DefaultKeyboardKey>
-      <LargeKeyboardKey>
+      <LargeKeyboardKey onClick={() => enterWord()}>ENTER</LargeKeyboardKey>
+      {keys[2].map((char, index) => (
+        <DefaultKeyboardKey key={index} onClick={() => addCharacter(char)}>
+          {char}
+        </DefaultKeyboardKey>
+      ))}
+      <LargeKeyboardKey onClick={() => removeLastCharacter()}>
         <BackspaceIcon />
       </LargeKeyboardKey>
     </KeyboardContainer>
